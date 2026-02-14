@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Physics Particle Simulation</title>
+<style>
+body {
+    margin:0;
+    background:black;
+    overflow:hidden;
+    font-family:Arial;
+    color:white;
+}
+#panel {
+    position:absolute;
+    right:20px;
+    top:20px;
+    width:300px;
+    background:rgba(0,0,0,0.6);
+    padding:20px;
+    border:1px solid #444;
+}
+input {
+    width:100%;
+}
+canvas {
+    display:block;
+}
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+
+<div id="panel">
+    <h3>Projectile Motion</h3>
+
+    <p>
+    x = v₀ cos(θ) t<br>
+    y = v₀ sin(θ) t − ½ g t²
+    </p>
+
+    Velocity: <input type="range" id="velocity" min="20" max="200" value="100"><br><br>
+    Angle: <input type="range" id="angle" min="10" max="80" value="45"><br><br>
+    Gravity: <input type="range" id="gravity" min="1" max="20" value="9"><br><br>
+
+    <button onclick="launch()">Launch Particle</button>
+</div>
+
+<script>
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particles = [];
+
+function launch() {
+    let v0 = parseFloat(document.getElementById("velocity").value);
+    let angle = parseFloat(document.getElementById("angle").value) * Math.PI/180;
+    let g = parseFloat(document.getElementById("gravity").value);
+
+    particles.push({
+        x: 100,
+        y: canvas.height - 100,
+        v0: v0,
+        angle: angle,
+        g: g,
+        time: 0
+    });
+}
+
+function animate() {
+    ctx.fillStyle = "rgba(0,0,0,0.2)";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    particles.forEach(p => {
+        p.time += 0.1;
+
+        let x = p.v0 * Math.cos(p.angle) * p.time;
+        let y = p.v0 * Math.sin(p.angle) * p.time - 0.5 * p.g * p.time * p.time;
+
+        p.x = 100 + x;
+        p.y = canvas.height - 100 - y;
+
+        ctx.beginPath();
+        ctx.shadowBlur = 20;
+        ctx.shadowColor = "#00ffff";
+        ctx.fillStyle = "#00ffff";
+        ctx.arc(p.x, p.y, 6, 0, Math.PI*2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+    });
+
+    requestAnimationFrame(animate);
+}
+
+animate();
+</script>
+
+</body>
+</html>
+
+
+
+
